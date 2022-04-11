@@ -4,11 +4,18 @@
       <div class="animation-area">
 
       </div>
+      <div class="menu-area">
+        <div class="menu-btn">ひんと</div>
+        <div class="menu-btn"
+        @click="clickAnswerBtn">こたえ</div>
+        <div class="menu-btn">せってい</div>
+        <div class="menu-btn">おわる</div>
+      </div>
     </div>
     <div class="container-right">
       <div class="answer-area">
         <div class="inputted-letter">
-          {{ inputtedLetter }}
+          {{ displayedLetters }}
         </div>
       </div>
       <div class="input-area">
@@ -19,9 +26,13 @@
           v-for="letter in japaneseSyllabary"
           :key="letter"
           @click="inputLetter(letter)"
-          :class="[(letter === 'や' || letter === 'ゆ' || letter === 'わ' || letter === 'を') ? 'next-empty' : '']">
+          :class="[(letter === 'や' || letter === 'ゆ') ? 'next-empty' : '']">
             <div class="letter">{{ letter }}</div>
           </li>
+          <li
+          @click="inputVoicedSoundMark"><div class="letter">゛</div></li>
+          <li
+          @click="inputSemiVoicedSoundMark"><div class="letter">゜</div></li>
 
         </ul>
 
@@ -40,34 +51,124 @@ export default {
       thirdLetter: '',
       fourthLetter: '',
       fifthLetter: '',
+      sixthLetter: '',
+      seventhLetter: '',
+      eighthLetter: '',
+      ninethLetter: '',
+      tenthLetter: '',
+      inputtedLetters: [],
       japaneseSyllabary: ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','れ','ろ','わ','を','ん']
     }
   },
   computed: {
-    inputtedLetter() {
-      const inputLetter = this.firstLetter + this.secondLetter + this.thirdLetter + this.fourthLetter + this.fifthLetter;
-      return inputLetter;
+    displayedLetters() {
+      let preparedLetters = [];
+
+      this.inputtedLetters.forEach((letter) => {
+        if(letter === '゛') {
+          if(preparedLetters[preparedLetters.length - 1] === 'か') {
+            preparedLetters[preparedLetters.length - 1] = 'が';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'き') {
+            preparedLetters[preparedLetters.length - 1] = 'ぎ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'く') {
+            preparedLetters[preparedLetters.length - 1] = 'ぐ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'け') {
+            preparedLetters[preparedLetters.length - 1] = 'げ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'こ') {
+            preparedLetters[preparedLetters.length - 1] = 'ご';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'さ') {
+            preparedLetters[preparedLetters.length - 1] = 'ざ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'し') {
+            preparedLetters[preparedLetters.length - 1] = 'じ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'す') {
+            preparedLetters[preparedLetters.length - 1] = 'ず';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'せ') {
+            preparedLetters[preparedLetters.length - 1] = 'ぜ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'そ') {
+            preparedLetters[preparedLetters.length - 1] = 'ぞ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'た') {
+            preparedLetters[preparedLetters.length - 1] = 'だ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'ち') {
+            preparedLetters[preparedLetters.length - 1] = 'ぢ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'つ') {
+            preparedLetters[preparedLetters.length - 1] = 'づ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'て') {
+            preparedLetters[preparedLetters.length - 1] = 'で';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'と') {
+            preparedLetters[preparedLetters.length - 1] = 'ど';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'は') {
+            preparedLetters[preparedLetters.length - 1] = 'ば';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'ひ') {
+            preparedLetters[preparedLetters.length - 1] = 'び';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'ふ') {
+            preparedLetters[preparedLetters.length - 1] = 'ぶ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'へ') {
+            preparedLetters[preparedLetters.length - 1] = 'べ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'ほ') {
+            preparedLetters[preparedLetters.length - 1] = 'ぼ';
+          }
+        }
+        else if(letter === '゜') {
+          if(preparedLetters[preparedLetters.length - 1] === 'は') {
+            preparedLetters[preparedLetters.length - 1] = 'ぱ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'ひ') {
+            preparedLetters[preparedLetters.length - 1] = 'ぴ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'ふ') {
+            preparedLetters[preparedLetters.length - 1] = 'ぷ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'へ') {
+            preparedLetters[preparedLetters.length - 1] = 'ぺ';
+          }
+          else if(preparedLetters[preparedLetters.length - 1] === 'ほ') {
+            preparedLetters[preparedLetters.length - 1] = 'ぽ';
+          }
+        }
+        else {
+          preparedLetters.push(letter);
+        }
+      })
+
+      let displayedLetters = '';
+      preparedLetters.forEach((letter) => {
+        displayedLetters = displayedLetters + letter;
+      })
+
+      return displayedLetters;
     }
   },
   methods: {
     inputLetter(letter) {
-      if(this.firstLetter === '') {
-        this.firstLetter = letter;
-      } else if(this.secondLetter === '') {
-        this.secondLetter = letter;
-      } else if(this.thirdLetter === '') {
-        this.thirdLetter = letter;
-      } else if(this.fourthLetter === '') {
-        this.fourthLetter = letter;
-      } else if(this.fifthLetter === '') {
-        this.fifthLetter = letter;
-      } else if(this.fifthLetter !== '') {
-        this.firstLetter = '';
-        this.secondLetter = '';
-        this.thirdLetter = '';
-        this.fourthLetter = '';
-        this.fifthLetter = '';
-      }
+      this.inputtedLetters.push(letter);
+    },
+    inputVoicedSoundMark() {
+      this.inputtedLetters.push('゛');
+    },
+    inputSemiVoicedSoundMark() {
+      this.inputtedLetters.push('゜');
+    },
+    clickAnswerBtn() {
+      this.inputtedLetters = [];
     }
   }
 }
@@ -79,7 +180,7 @@ export default {
     border: 5px solid #fff;
     width: 95%;
     margin: 15px auto;
-    max-height: 700px;  
+    max-height: 700px;
     aspect-ratio: 16 / 9;
 
     .container-left {
@@ -90,7 +191,33 @@ export default {
       .animation-area {
         background-color: #999999;
         width: 100%;
-        height: 100%;
+        height: 70%;
+        background-image: url(/farm.png);
+        background-size: contain;
+      }
+
+      .menu-area {
+        background-color: #c0ff91;
+        width: 100%;
+        height: 30%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-items: center;
+
+        .menu-btn {
+          width: 40%;
+          height: 35%;
+          background-color: #fa7e7e;
+          border-radius: 10%;
+          text-align: center;
+          color: #fff;
+          font-size: 1.8vw;
+          font-weight: bold;
+          line-height: 5.2vw;
+          cursor: pointer;
+        }
+
       }
 
     }
@@ -101,9 +228,10 @@ export default {
       float: left;
 
       .answer-area {
-        background-color: #fff3a8;
         width: 100%;
         height: 25%;
+        background-image: url(/answer-area.png);
+        background-size: contain;
 
         .inputted-letter {
           padding: 2vw;
@@ -133,9 +261,11 @@ export default {
           li {
             height: 16%;
             width: 9%;
-            background-color: #fff;
+            background: linear-gradient(150deg, rgba(255,255,255,1) 0%, rgba(224,224,224,1) 65%, rgba(196,196,196,1) 100%);
             margin: 1% 0;
             cursor: pointer;
+            border-radius: 10%;
+            box-shadow: 2px 2px 15px -5px #777777;
 
             .letter {
               margin: 0 auto;
@@ -143,6 +273,7 @@ export default {
               font-size: 3vw;
               line-height: 6vw;
               text-align: center;
+              color: #333333;
             }
 
           }
