@@ -2,10 +2,12 @@
   <div class="container">
     <div class="container-left">
       <div class="animation-area">
-
+        <div class="message">ぼくのなまえ<br>わかるかな？</div>
+        <div class="quiz-image"><img :src="currentQuiz.url" alt=""></div>
       </div>
       <div class="menu-area">
-        <div class="menu-btn">ひんと</div>
+        <div class="menu-btn"
+        @click="openSuccessModal">ひんと</div>
         <div class="menu-btn"
         @click="clickAnswerBtn">こたえ</div>
         <div class="menu-btn">せってい</div>
@@ -39,25 +41,36 @@
       </div>
     </div>
 
+    <div v-if="this.successModal" v-cloak>
+      <SuccessModal
+      @closeSuccessModal="closeSuccessModal">
+      </SuccessModal>
+    </div>
+
   </div>
 </template>
 
 <script>
+
+import SuccessModal from '@/components/success.vue'
+
+import {
+  collection,
+  getFirestore,
+  getDocs
+  } from "firebase/firestore";
+
 export default {
+  components: {
+    SuccessModal
+  },
   data() {
     return {
-      firstLetter: '',
-      secondLetter: '',
-      thirdLetter: '',
-      fourthLetter: '',
-      fifthLetter: '',
-      sixthLetter: '',
-      seventhLetter: '',
-      eighthLetter: '',
-      ninethLetter: '',
-      tenthLetter: '',
       inputtedLetters: [],
-      japaneseSyllabary: ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','れ','ろ','わ','を','ん']
+      japaneseSyllabary: ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','れ','ろ','わ','を','ん'],
+      quizDataList: [],
+      quizNumber: 0,
+      successModal: false
     }
   },
   computed: {
@@ -155,6 +168,9 @@ export default {
       })
 
       return displayedLetters;
+    },
+    currentQuiz() {
+      return this.$store.getters.currentQuiz;
     }
   },
   methods: {
@@ -169,7 +185,33 @@ export default {
     },
     clickAnswerBtn() {
       this.inputtedLetters = [];
+    },
+    openSuccessModal() {
+      this.successModal = true;
+    },
+    closeSuccessModal() {
+      this.successModal = false;
     }
+  },
+  created() {
+    getDocs(collection(getFirestore(), 'quiz-data'))
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const quizData = {
+            id: doc.id,
+            name: doc.data().name,
+            letters: doc.data().letters,
+            wordCount: doc.data().wordcount,
+            url: doc.data().path
+          };
+          this.quizDataList.push(quizData);
+        });
+        this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+        console.log(this.$store.getters.currentQuiz.name);
+      })
+      .catch(() => {
+        console.log('クイズデータ取得失敗');
+      })
   }
 }
 </script>
@@ -194,6 +236,31 @@ export default {
         height: 70%;
         background-image: url(/farm.png);
         background-size: contain;
+        position: relative;
+
+        .message {
+          width: 60%;
+          text-align: center;
+          font-size: 1.5vw;
+          font-weight: bold;
+          color: #59240f;
+          margin: 0 auto;
+          padding-top: 7.5vw;
+          letter-spacing: 0.2vw;
+        }
+
+        .quiz-image {
+          width: 90%;
+          position: absolute;
+          top: 13vw;
+          left: 1vw;
+
+          img {
+            width: 100%;
+          }
+
+        }
+
       }
 
       .menu-area {
@@ -231,14 +298,17 @@ export default {
         width: 100%;
         height: 25%;
         background-image: url(/answer-area.png);
+        // background-color: #FFF3A8;
         background-size: contain;
 
         .inputted-letter {
           padding: 2vw;
-          font-size: 7.5vw;
+          font-size: 6.5vw;
+          line-height: 8.5vw;
           text-align: center;
           font-weight: bold;
           letter-spacing: 1.3vw;
+
         }
 
       }
@@ -251,7 +321,7 @@ export default {
         .list-syllabary-ja{
             width: 98%;
             height: 100%;
-            margin: 0 auto; 
+            margin: 0 auto;
             display: flex;
             flex-direction: column;
             flex-wrap: wrap-reverse;
