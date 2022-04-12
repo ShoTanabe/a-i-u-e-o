@@ -4,17 +4,17 @@
   class="display">
     <div class="modal">
       <div class="message">
-        正解だよ
+        ちがうよ
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'SuccessModal',
+  name: 'FailedModal',
   methods: {
     closeSuccessModal() {
-      this.$emit('closeSuccessModal');
+      this.$emit('closeFailedModal');
     }
   }
 }
@@ -38,7 +38,7 @@ export default {
       height: 80%;
       background-color: #fff;
       border-radius: 20%;
-      border: solid 5px #ff763b;
+      border: solid 5px #334bff;
       display: flex;
       justify-content: center;
       align-items: center;

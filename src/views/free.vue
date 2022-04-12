@@ -2,7 +2,7 @@
   <div class="container">
     <div class="container-left">
       <div class="animation-area">
-        <div class="message">ぼくのなまえ<br>わかるかな？</div>
+        <div class="message">じゆうに<br>あそんでね</div>
         <div class="quiz-image"><img :src="currentQuiz.url" alt=""></div>
       </div>
       <div class="menu-area">
@@ -10,8 +10,7 @@
         @click="openSuccessModal">ひんと</div>
         <div class="menu-btn"
         @click="clickAnswerBtn">こたえ</div>
-        <div class="menu-btn"
-        @click="openFailedModal">せってい</div>
+        <div class="menu-btn">せってい</div>
         <div class="menu-btn">おわる</div>
       </div>
     </div>
@@ -47,18 +46,13 @@
       @closeSuccessModal="closeSuccessModal">
       </SuccessModal>
     </div>
-    <div v-if="this.failedModal" v-cloak>
-      <FailedModal
-      @closeFailedModal="closeFailedModal">
-      </FailedModal>
-    </div>
+
   </div>
 </template>
 
 <script>
 
 import SuccessModal from '@/components/success.vue'
-import FailedModal from '@/components/failed.vue'
 
 import {
   collection,
@@ -68,8 +62,7 @@ import {
 
 export default {
   components: {
-    SuccessModal,
-    FailedModal
+    SuccessModal
   },
   data() {
     return {
@@ -77,9 +70,7 @@ export default {
       japaneseSyllabary: ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','れ','ろ','わ','を','ん'],
       quizDataList: [],
       quizNumber: 0,
-      successModal: false,
-      failedModal: false,
-      errorCount: 0
+      successModal: false
     }
   },
   computed: {
@@ -185,84 +176,12 @@ export default {
   methods: {
     inputLetter(letter) {
       this.inputtedLetters.push(letter);
-
-      let answer = '';
-      this.inputtedLetters.forEach((inputtedLetter) => {
-        answer = answer + inputtedLetter;
-      });
-      let correctAnswer = '';
-      this.currentQuiz.letters.forEach((correctLetter) => {
-        correctAnswer = correctAnswer + correctLetter;
-      });
-
-      if(answer === correctAnswer) {
-        this.successModal = true;
-      }
-      else {
-        this.inputtedLetters.forEach((inputtedLetter, i) => {
-          if(inputtedLetter !== this.currentQuiz.letters[i]) {
-            this.failedModal = true;
-          }
-          else {
-            this.errorCount ++;
-          }
-        })
-      }
-
     },
     inputVoicedSoundMark() {
       this.inputtedLetters.push('゛');
-
-      let answer = '';
-      this.inputtedLetters.forEach((inputtedLetter) => {
-        answer = answer + inputtedLetter;
-      });
-      let correctAnswer = '';
-      this.currentQuiz.letters.forEach((correctLetter) => {
-        correctAnswer = correctAnswer + correctLetter;
-      });
-
-      if(answer === correctAnswer) {
-        this.successModal = true;
-      }
-      else {
-        this.inputtedLetters.forEach((inputtedLetter, i) => {
-          if(inputtedLetter !== this.currentQuiz.letters[i]) {
-            this.failedModal = true;
-          }
-          else {
-            this.errorCount ++;
-          }
-        })
-      }
-      
     },
     inputSemiVoicedSoundMark() {
       this.inputtedLetters.push('゜');
-
-      let answer = '';
-      this.inputtedLetters.forEach((inputtedLetter) => {
-        answer = answer + inputtedLetter;
-      });
-      let correctAnswer = '';
-      this.currentQuiz.letters.forEach((correctLetter) => {
-        correctAnswer = correctAnswer + correctLetter;
-      });
-
-      if(answer === correctAnswer) {
-        this.successModal = true;
-      }
-      else {
-        this.inputtedLetters.forEach((inputtedLetter, i) => {
-          if(inputtedLetter !== this.currentQuiz.letters[i]) {
-            this.failedModal = true;
-          }
-          else {
-            this.errorCount ++;
-          }
-        })
-      }
-      
     },
     clickAnswerBtn() {
       this.inputtedLetters = [];
@@ -271,23 +190,7 @@ export default {
       this.successModal = true;
     },
     closeSuccessModal() {
-      if(this.quizNumber === this.quizDataList.length - 1) {
-        this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
-        this.quizNumber = 0;
-      }
-      else if(this.quizNumber !== this.quizDataList.length - 1) {
-        this.quizNumber++;
-        this.$store.commit('updateCurrentQuiz', this.quizDataList[this.quizNumber]);
-      }
       this.successModal = false;
-      this.inputtedLetters = [];
-    },
-    openFailedModal() {
-      this.failedModal = true;
-    },
-    closeFailedModal() {
-      this.inputtedLetters.splice(-1,1);
-      this.failedModal = false;
     }
   },
   created() {
@@ -304,6 +207,7 @@ export default {
           this.quizDataList.push(quizData);
         });
         this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+        console.log(this.$store.getters.currentQuiz.name);
       })
       .catch(() => {
         console.log('クイズデータ取得失敗');
