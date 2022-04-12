@@ -220,9 +220,9 @@ export default {
   .container {
     background-color: #beeffd;
     border: 5px solid #fff;
-    width: 95%;
-    margin: 15px auto;
-    max-height: 700px;
+    width: 100%;
+    margin: 0 auto;
+    max-height: 720px;
     aspect-ratio: 16 / 9;
 
     .container-left {
