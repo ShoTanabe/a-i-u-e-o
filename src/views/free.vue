@@ -2,16 +2,18 @@
   <div class="container">
     <div class="container-left">
       <div class="animation-area">
-        <div class="message">じゆうに<br>あそんでね</div>
-        <div class="quiz-image"><img :src="currentQuiz.url" alt=""></div>
+        <div class="message">なまえを<br>よんでみてね</div>
+        <div class="quiz-image"><img :src="calledImage" alt=""></div>
       </div>
       <div class="menu-area">
         <div class="menu-btn"
-        @click="openSuccessModal">ひんと</div>
-        <div class="menu-btn"
-        @click="clickAnswerBtn">こたえ</div>
-        <div class="menu-btn">せってい</div>
-        <div class="menu-btn">おわる</div>
+        @click="callName">よぶ</div>
+        <!-- <div class="menu-btn"
+        @click="clickAnswerBtn">りすと</div>
+        <div class="menu-btn">せってい</div> -->
+        <div
+        @click="backToHome()"
+        class="menu-btn">おわる</div>
       </div>
     </div>
     <div class="container-right">
@@ -70,7 +72,8 @@ export default {
       japaneseSyllabary: ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','れ','ろ','わ','を','ん'],
       quizDataList: [],
       quizNumber: 0,
-      successModal: false
+      successModal: false,
+      calledImage: ''
     }
   },
   computed: {
@@ -183,14 +186,20 @@ export default {
     inputSemiVoicedSoundMark() {
       this.inputtedLetters.push('゜');
     },
-    clickAnswerBtn() {
+    callName() {
+      const calledName = this.displayedLetters;
+
+      const calledData = this.quizDataList.find(data => data.name === calledName);
+
+      if(calledData === undefined) {
+        this.calledImage = 'https://firebasestorage.googleapis.com/v0/b/a-i-u-e-o.appspot.com/o/quiz-img%2Fno-img.png?alt=media&token=1fced5f2-d440-4831-9e02-f12f8f475161';
+      } else {
+        this.calledImage = this.quizDataList.find(data => data.name === calledName).url;
+      }
       this.inputtedLetters = [];
     },
-    openSuccessModal() {
-      this.successModal = true;
-    },
-    closeSuccessModal() {
-      this.successModal = false;
+    backToHome() {
+      this.$router.push('/');
     }
   },
   created() {
@@ -206,8 +215,6 @@ export default {
           };
           this.quizDataList.push(quizData);
         });
-        this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
-        console.log(this.$store.getters.currentQuiz.name);
       })
       .catch(() => {
         console.log('クイズデータ取得失敗');

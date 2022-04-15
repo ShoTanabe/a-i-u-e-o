@@ -35,13 +35,13 @@ export default {
 
     .modal {
       width: 50%;
-      height: 80%;
       background-color: #fff;
       border-radius: 20%;
       border: solid 5px #334bff;
       display: flex;
       justify-content: center;
       align-items: center;
+      aspect-ratio: 10 / 9;
 
       .message {
         text-align: center;
