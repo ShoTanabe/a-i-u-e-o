@@ -28,13 +28,14 @@ export default {
 
 <style scoped lang="scss">
   .container {
+    aspect-ratio: 16 / 9;
     background-image: url(/home.png);
     background-size: contain;
     border: 5px solid #fff;
     width: 100%;
+    height: auto;
     margin: 0 auto;
     max-height: 720px;
-    aspect-ratio: 16 / 9;
     position: relative;
 
     .menuBtn {

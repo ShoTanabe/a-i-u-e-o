@@ -227,10 +227,11 @@ export default {
   .container {
     background-color: #beeffd;
     border: 5px solid #fff;
-    width: 100%;
     margin: 0 auto;
-    max-height: 720px;
     aspect-ratio: 16 / 9;
+    width: 100%;
+    height: auto;
+    max-height: 720px;
 
     .container-left {
       width: 25%;

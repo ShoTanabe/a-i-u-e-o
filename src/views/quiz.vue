@@ -2,17 +2,17 @@
   <div class="container">
     <div class="container-left">
       <div class="animation-area">
-        <div class="message">ぼくのなまえ<br>わかるかな？</div>
+        <div class="message">おなまえ<br>わかるかな？</div>
         <div class="quiz-image"><img :src="currentQuiz.url" alt=""></div>
       </div>
       <div class="menu-area">
         <div class="menuBtn"
         @click="displayHint()">ひんと</div>
-        <!-- <div class="menuBtn"
-        @click="clickAnswerBtn">こたえ</div> -->
+        <div class="menuBtn"
+        @click="openTrialModal()">とらい</div>
         <div
         @click="changeNoutoreModo()"
-        :class="{menuBtn: true, active: noutore}">のうとれ</div>
+        :class="{menuBtn: true, active: noutore}">ばらばら</div>
         <div
         @click="backToHome()"
         class="menuBtn">おわる</div>
@@ -37,7 +37,6 @@
         </div>
       </div>
       <div class="input-area">
-
 
         <ul
         v-if="!noutore"
@@ -88,6 +87,17 @@
       @closeFailedModal="closeFailedModal">
       </FailedModal>
     </div>
+    <div v-if="this.trialModal" v-cloak>
+      <TrialModal
+      @closeTrialModal="closeTrialModal"
+      @startTrialMode="startTrialMode">
+      </TrialModal>
+    </div>
+    <div v-if="this.resultModal" v-cloak>
+      <ResultModal
+      @closeResultModal="closeResultModal">
+      </ResultModal>
+    </div>
   </div>
 </template>
 
@@ -95,6 +105,8 @@
 
 import SuccessModal from '@/components/success.vue'
 import FailedModal from '@/components/failed.vue'
+import TrialModal from '@/components/trial.vue'
+import ResultModal from '@/components/result.vue'
 
 import {
   collection,
@@ -105,7 +117,9 @@ import {
 export default {
   components: {
     SuccessModal,
-    FailedModal
+    FailedModal,
+    TrialModal,
+    ResultModal
   },
   data() {
     return {
@@ -121,7 +135,11 @@ export default {
       displayInput: true,
       arrayHintLetters: [],
       noEvent: false,
-      noutore: false
+      noutore: false,
+      trialModal: false,
+      trialMode: false,
+      resultModal: false,
+      trialTime: 0
     }
   },
   computed: {
@@ -337,27 +355,42 @@ export default {
       this.successModal = true;
     },
     closeSuccessModal() {
-      if(this.quizNumber === this.quizDataList.length - 1) {
 
-        const shuffle = ([...array]) => {
-          for (let i = array.length - 1; i >= 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+      if(this.trialMode === true && this.quizNumber === 9) {
+
+        this.successModal = false;
+        this.inputtedLetters = [];
+        this.$store.commit('updateTrialTime', this.trialTime);
+        this.trialMode = false;
+        this.resultModal = true;
+        this.trialTime = 0;
+
+      }
+      else {
+
+        if(this.quizNumber === this.quizDataList.length - 1) {
+
+          const shuffle = ([...array]) => {
+            for (let i = array.length - 1; i >= 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
           }
-          return array;
+
+          this.quizDataList = shuffle(this.quizDataList);
+
+          this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+          this.quizNumber = 0;
         }
+        else if(this.quizNumber !== this.quizDataList.length - 1) {
+          this.quizNumber++;
+          this.$store.commit('updateCurrentQuiz', this.quizDataList[this.quizNumber]);
+        }
+        this.successModal = false;
+        this.inputtedLetters = [];
 
-        this.quizDataList = shuffle(this.quizDataList);
-
-        this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
-        this.quizNumber = 0;
       }
-      else if(this.quizNumber !== this.quizDataList.length - 1) {
-        this.quizNumber++;
-        this.$store.commit('updateCurrentQuiz', this.quizDataList[this.quizNumber]);
-      }
-      this.successModal = false;
-      this.inputtedLetters = [];
     },
     openFailedModal() {
       this.failedModal = true;
@@ -400,7 +433,45 @@ export default {
         this.noutore = true;
       }
     },
+    openTrialModal() {
+      this.trialModal = true;
+      this.trialMode = false;
+    },
+    closeTrialModal() {
+      this.trialModal = false;
+    },
+    startTrialMode() {
+      this.trialModal = false;
+
+      this.trialMode = true;
+      this.trialTime = 0;
+
+      const shuffle = ([...array]) => {
+        for (let i = array.length - 1; i >= 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      this.quizDataList = shuffle(this.quizDataList);
+
+      this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+      this.quizNumber = 0;
+
+      const intervalId = setInterval(() => {
+        this.trialTime++;
+        if(this.trialMode === false) {
+          clearInterval(intervalId);
+        }
+      },1000)
+
+    },
+    closeResultModal() {
+      this.resultModal = false;
+    },
     backToHome() {
+      this.trialMode = false;
       this.$router.push('/');
     }
   },
@@ -442,10 +513,11 @@ export default {
   .container {
     background-color: #beeffd;
     border: 5px solid #fff;
-    width: 100%;
     margin: 0 auto;
-    max-height: 720px;
     aspect-ratio: 16 / 9;
+    width: 100%;
+    height: auto;
+    max-height: 720px;
 
     .container-left {
       width: 25%;
