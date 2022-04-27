@@ -1,4 +1,4 @@
-# a-i-u-e-o
+# おなまえ「あいうえお」
 
 ## Project setup
 ```
