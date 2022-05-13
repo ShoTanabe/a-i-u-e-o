@@ -31,21 +31,6 @@
     </div>
     <div class="scrollArea">
       <div class="quizListArea">
-        <div class="listTitleBlock">
-          <p class="listTitle">クイズリスト</p>
-          <p class="supplement">（きほんセット）</p>
-        </div>
-        <div class="quizList">
-          <div
-          v-for="(quiz, i) in quizDataList"
-          :key="quiz.name + i"
-          :class="{quiz, leftEnd: (i + 1)%4 === 1}">
-            <p class="answer">{{ quiz.name }}</p>
-            <div class="imgBlock">
-              <img :src="quiz.url" alt="">
-            </div>
-          </div>
-        </div>
 
 
         <div class="listTitleBlock">
@@ -68,7 +53,19 @@
           </div>
         </div>
         <div
-        v-if="this.currentUser.name !== ''"
+        v-if="this.currentUser.name !== '' && this.customQuizDataList.length === 0"
+        class="messageForGuestBlock">
+          <p class="messageForGuest">
+            オリジナルのクイズを追加しましょう
+          </p>
+          <div class="menuBtn">
+            <div
+            @click="openMakingQuizModal()"
+            class="btn">クイズ追加</div>
+          </div>
+        </div>
+        <div
+        v-if="this.currentUser.name !== '' && this.customQuizDataList.length !== 0"
         class="quizList">
           <div
           v-for="(quiz, i) in customQuizDataList"
@@ -108,6 +105,22 @@
 
         </div>
 
+        <div class="listTitleBlock">
+          <p class="listTitle">クイズリスト</p>
+          <p class="supplement">（きほんセット）</p>
+        </div>
+        <div class="quizList">
+          <div
+          v-for="(quiz, i) in quizDataList"
+          :key="quiz.name + i"
+          :class="{quiz, leftEnd: (i + 1)%4 === 1}">
+            <p class="answer">{{ quiz.name }}</p>
+            <div class="imgBlock">
+              <img :src="quiz.url" alt="">
+            </div>
+          </div>
+        </div>
+
 
       </div>
     </div>
@@ -119,7 +132,8 @@
     </div>
     <div v-if="this.loginModal" v-cloak>
       <LoginModal
-      @closeLoginModal="closeLoginModal">
+      @closeLoginModal="closeLoginModal"
+      @completeLogin="completeLogin">
       </LoginModal>
     </div>
     <div v-if="this.makingQuizModal" v-cloak>
@@ -220,6 +234,30 @@ export default {
     },
     closeLoginModal() {
       this.loginModal = false;
+    },
+    completeLogin() {
+
+      getDocs(collection(getFirestore(), 'users', this.$store.getters.currentUser.id, 'quiz'))
+        .then((querySnapshot) => {
+          this.customQuizDataList = [];
+          querySnapshot.forEach((doc) => {
+            const quizData = {
+              id: doc.id,
+              name: doc.data().name,
+              letters: doc.data().letters,
+              wordCount: doc.data().wordcount,
+              url: doc.data().path,
+              customMenu: false,
+              editAnswer: false
+            };
+            this.customQuizDataList.push(quizData);
+            this.loginModal = false;
+          });
+        })
+        .catch(() => {
+          console.log('カスタムクイズデータ取得失敗');
+        })
+
     },
     openMakingQuizModal() {
       this.makingQuizModal = true;
@@ -325,6 +363,7 @@ export default {
         id: ''
       }
       this.$store.commit('updateCurrentUser', currentUser);
+      this.customQuizDataList = [];
     },
     openCustomMenu(quiz) {
       if(!quiz.editAnswer){

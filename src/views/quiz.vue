@@ -511,7 +511,6 @@ export default {
               }
 
               this.quizDataList = shuffle(this.quizDataList);
-
               this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
               
             });
@@ -519,8 +518,6 @@ export default {
           .catch(() => {
             console.log('カスタムクイズデータ取得失敗');
           })
-
-          
         }
         else {
           const shuffle = ([...array]) => {

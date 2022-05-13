@@ -106,7 +106,7 @@ export default {
           }
           this.$store.commit('updateCurrentUser', currentUser);
 
-          this.$emit('closeLoginModal');
+          this.$emit('completeLogin');
         }
         else {
           this.wrongPassword = true;
