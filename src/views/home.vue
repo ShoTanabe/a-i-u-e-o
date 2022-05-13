@@ -7,6 +7,9 @@
       <div
       @click="goToFree()"
       class="btn">じゆう</div>
+      <div
+      @click="goToList()"
+      class="btn">リスト/<br>ログイン</div>
     </div>
   </div>
 </template>
@@ -20,6 +23,9 @@ export default {
     },
     goToFree() {
       this.$router.push('/free');
+    },
+    goToList() {
+      this.$router.push('/list');
     }
   }
 }
@@ -59,11 +65,16 @@ export default {
         letter-spacing: 0.6vw;
         border: solid 0.5vw #fff;
         cursor: pointer;
+        margin-right: 4vw;
 
         &:last-child {
-          margin-left: 4vw;
+          font-size: 2.8vw;
+          margin-right: 0;
+          line-height: 3.5vw;
+          padding: 0.5vw 0;
+          color: #fa7e7e;
+          background-color: yellow;
         }
-
       }
 
     }

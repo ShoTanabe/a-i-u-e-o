@@ -215,6 +215,27 @@ export default {
           };
           this.quizDataList.push(quizData);
         });
+
+        if(this.$store.getters.currentUser.id !== ''){
+          getDocs(collection(getFirestore(), 'users', this.$store.getters.currentUser.id, 'quiz'))
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              const quizData = {
+                id: doc.id,
+                name: doc.data().name,
+                letters: doc.data().letters,
+                wordCount: doc.data().wordcount,
+                url: doc.data().path
+              };
+              this.quizDataList.push(quizData);
+
+              
+            });
+          })
+          .catch(() => {
+            console.log('カスタムクイズデータ取得失敗');
+          })
+        }
       })
       .catch(() => {
         console.log('クイズデータ取得失敗');

@@ -489,20 +489,57 @@ export default {
           this.quizDataList.push(quizData);
         });
 
-        const shuffle = ([...array]) => {
-          for (let i = array.length - 1; i >= 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-          }
-          return array;
+        if(this.$store.getters.currentUser.id !== ''){
+          getDocs(collection(getFirestore(), 'users', this.$store.getters.currentUser.id, 'quiz'))
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              const quizData = {
+                id: doc.id,
+                name: doc.data().name,
+                letters: doc.data().letters,
+                wordCount: doc.data().wordcount,
+                url: doc.data().path
+              };
+              this.quizDataList.push(quizData);
+
+              const shuffle = ([...array]) => {
+                for (let i = array.length - 1; i >= 0; i--) {
+                  const j = Math.floor(Math.random() * (i + 1));
+                  [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+              }
+
+              this.quizDataList = shuffle(this.quizDataList);
+
+              this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+              
+            });
+          })
+          .catch(() => {
+            console.log('カスタムクイズデータ取得失敗');
+          })
+
+          
         }
+        else {
+          const shuffle = ([...array]) => {
+            for (let i = array.length - 1; i >= 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+          }
 
-        this.quizDataList = shuffle(this.quizDataList);
+          this.quizDataList = shuffle(this.quizDataList);
 
-        this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+
+          this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+          }
+
       })
       .catch(() => {
-        console.log('クイズデータ取得失敗');
+        console.log('きほんクイズデータ取得失敗');
       })
 
   }
@@ -515,7 +552,7 @@ export default {
     border: 5px solid #fff;
     margin: 0 auto;
     aspect-ratio: 16 / 9;
-    width: 100%;
+    width: auto;
     height: auto;
     max-height: 720px;
 
