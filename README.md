@@ -1,5 +1,7 @@
 # おなまえ「あいうえお」(Vue & Firebase)
 
+## はじめに
+```
 「おなまえ『あいうえお』」は幼児向けの「ひらがな」学習用アプリです。
 
 ![クイズ画面](./quiz-img.png)
@@ -12,11 +14,23 @@
 
 名前とパスワードを設定してログインすると、自分でオリジナルのクイズを登録できます。  
 お子さんの好きなものや親しみのある画像をクイズとして登録することで、学習効果もアップするかもしれません。
+```
 
-## Project setup
+## 使用技術
 ```
-npm install
+・Vue  
+・VueCLI  
+・VueRouter  
+・Vuex  
+・JavaScript  
+・CSS  
+・Firebase  
+  -Firestore  
+  -Storage  
+  -Hosting
 ```
+
+
 
 ### Compiles and hot-reloads for development
 ```
