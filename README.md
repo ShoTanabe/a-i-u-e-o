@@ -74,6 +74,11 @@
 
 ![クイズ追加画面](./readme-img/newquiz-img.png) 
 
+#### ・クイズ編集/削除機能
+ログインして追加したクイズは簡単に読み方の変更と削除が可能です。
+
+![編集画面](./edit-img/newquiz-img.png) 
+
 ### Compiles and minifies for production
 ```
 npm run build
