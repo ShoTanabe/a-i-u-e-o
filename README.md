@@ -2,6 +2,8 @@
 
 「おなまえ『あいうえお』」は幼児向けの「ひらがな」学習用アプリです。
 
+!トップ画面(./home-img.png)
+
 ## Project setup
 ```
 npm install
