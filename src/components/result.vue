@@ -1,20 +1,27 @@
 <template>
   <div
-  @click="closeSuccessModal()"
+  @click="closeResultModal()"
   class="display">
     <div class="modal">
       <div class="message">
-        ちがうよ
+        <p>おしまい<br>よくがんばったね！</p>
+        <p class="result"><span class="resulttime">{{ trialTime }}</span>びょう</p>
+        <p>だったよ</p>
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'FailedModal',
+  name: 'ResultModal',
   methods: {
-    closeSuccessModal() {
-      this.$emit('closeFailedModal');
+    closeResultModal() {
+      this.$emit('closeResultModal');
+    }
+  },
+  computed: {
+    trialTime() {
+      return this.$store.getters.trialTime;
     }
   }
 }
@@ -37,7 +44,7 @@ export default {
       width: 50%;
       background-color: #fff;
       border-radius: 20%;
-      border: solid 5px #334bff;
+      border: solid 5px #ff763b;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -47,6 +54,19 @@ export default {
         text-align: center;
         font-weight: bold;
         font-size: 4vw;
+
+        img {
+          width: 40%;
+        }
+
+        .result {
+          margin: 1vw 0;
+        }
+
+        .resulttime {
+          font-size: 10vw;
+        }
+
       }
 
     }

@@ -4,6 +4,7 @@ import Router from 'vue-router';
 import Home from "./views/home.vue";
 import Quiz from "./views/quiz.vue";
 import Free from "./views/free.vue";
+import List from "./views/list.vue";
 
 Vue.use(Router);
 
@@ -12,6 +13,7 @@ export default new Router({
   routes: [
     { path: '/', component: Home },
     { path: '/quiz', component: Quiz },
-    { path: '/free', component: Free }
+    { path: '/free', component: Free },
+    { path: '/list', component: List }
   ]
 });

@@ -2,34 +2,69 @@
   <div class="container">
     <div class="container-left">
       <div class="animation-area">
-        <div class="message">ぼくのなまえ<br>わかるかな？</div>
+        <div class="message">おなまえ<br>わかるかな？</div>
         <div class="quiz-image"><img :src="currentQuiz.url" alt=""></div>
       </div>
       <div class="menu-area">
-        <div class="menu-btn"
-        @click="openSuccessModal">ひんと</div>
-        <div class="menu-btn"
-        @click="clickAnswerBtn">こたえ</div>
-        <div class="menu-btn"
-        @click="openFailedModal">せってい</div>
-        <div class="menu-btn">おわる</div>
+        <div class="menuBtn"
+        @click="displayHint()">ひんと</div>
+        <div class="menuBtn"
+        @click="openTrialModal()">とらい</div>
+        <div
+        @click="changeNoutoreModo()"
+        :class="{menuBtn: true, active: noutore}">ばらばら</div>
+        <div
+        @click="backToHome()"
+        class="menuBtn">おわる</div>
       </div>
     </div>
     <div class="container-right">
       <div class="answer-area">
-        <div class="inputted-letter">
+        <div
+        v-if="displayInput"
+        class="inputted-letter">
           {{ displayedLetters }}
+        </div>
+        <div
+        v-if="displayHintLetters"
+        class="hint-letter">
+          <span
+          v-for="(letter, i) in arrayHintLetters"
+          :key="letter + i"
+          :class="[(i === arrayHintLetters.length - 1) ? 'new-hint-letter' : '']">
+            {{ letter }}
+          </span>
         </div>
       </div>
       <div class="input-area">
 
-        <ul class="list-syllabary-ja">
+        <ul
+        v-if="!noutore"
+        class="list-syllabary-ja">
 
           <li
           v-for="letter in japaneseSyllabary"
           :key="letter"
           @click="inputLetter(letter)"
-          :class="[(letter === 'や' || letter === 'ゆ') ? 'next-empty' : '']">
+          :class="{nextEmpty: (letter === 'や' || letter === 'ゆ'), noevent: noEvent}">
+            <div class="letter">{{ letter }}</div>
+          </li>
+          <li
+          @click="inputVoicedSoundMark"><div class="letter">゛</div></li>
+          <li
+          @click="inputSemiVoicedSoundMark"><div class="letter">゜</div></li>
+
+        </ul>
+
+        <ul
+        v-if="noutore"
+        class="list-syllabary-ja">
+
+          <li
+          v-for="letter in noutoreSyllabary"
+          :key="letter"
+          @click="inputLetter(letter)"
+          :class="{noevent: noEvent}">
             <div class="letter">{{ letter }}</div>
           </li>
           <li
@@ -52,6 +87,17 @@
       @closeFailedModal="closeFailedModal">
       </FailedModal>
     </div>
+    <div v-if="this.trialModal" v-cloak>
+      <TrialModal
+      @closeTrialModal="closeTrialModal"
+      @startTrialMode="startTrialMode">
+      </TrialModal>
+    </div>
+    <div v-if="this.resultModal" v-cloak>
+      <ResultModal
+      @closeResultModal="closeResultModal">
+      </ResultModal>
+    </div>
   </div>
 </template>
 
@@ -59,6 +105,8 @@
 
 import SuccessModal from '@/components/success.vue'
 import FailedModal from '@/components/failed.vue'
+import TrialModal from '@/components/trial.vue'
+import ResultModal from '@/components/result.vue'
 
 import {
   collection,
@@ -69,17 +117,29 @@ import {
 export default {
   components: {
     SuccessModal,
-    FailedModal
+    FailedModal,
+    TrialModal,
+    ResultModal
   },
   data() {
     return {
       inputtedLetters: [],
       japaneseSyllabary: ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','れ','ろ','わ','を','ん'],
+      noutoreSyllabary: [],
       quizDataList: [],
       quizNumber: 0,
       successModal: false,
       failedModal: false,
-      errorCount: 0
+      errorCount: 0,
+      displayHintLetters: false,
+      displayInput: true,
+      arrayHintLetters: [],
+      noEvent: false,
+      noutore: false,
+      trialModal: false,
+      trialMode: false,
+      resultModal: false,
+      trialTime: 0
     }
   },
   computed: {
@@ -184,33 +244,54 @@ export default {
   },
   methods: {
     inputLetter(letter) {
+      this.displayHintLetters = false;
+      this.displayInput = true;
+
       this.inputtedLetters.push(letter);
+      this.noEvent = true;
 
-      let answer = '';
-      this.inputtedLetters.forEach((inputtedLetter) => {
-        answer = answer + inputtedLetter;
-      });
-      let correctAnswer = '';
-      this.currentQuiz.letters.forEach((correctLetter) => {
-        correctAnswer = correctAnswer + correctLetter;
-      });
-
-      if(answer === correctAnswer) {
-        this.successModal = true;
-      }
-      else {
-        this.inputtedLetters.forEach((inputtedLetter, i) => {
-          if(inputtedLetter !== this.currentQuiz.letters[i]) {
-            this.failedModal = true;
-          }
-          else {
-            this.errorCount ++;
-          }
+      const sleep = (ms) => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve()
+          }, ms)
         })
       }
 
+      sleep(500)
+      .then(() => {
+          let answer = '';
+          this.inputtedLetters.forEach((inputtedLetter) => {
+            answer = answer + inputtedLetter;
+          });
+          let correctAnswer = '';
+          this.currentQuiz.letters.forEach((correctLetter) => {
+            correctAnswer = correctAnswer + correctLetter;
+          });
+
+          if(answer === correctAnswer) {
+            this.successModal = true;
+          }
+          else {
+            this.inputtedLetters.forEach((inputtedLetter, i) => {
+              if(inputtedLetter !== this.currentQuiz.letters[i]) {
+                this.failedModal = true;
+              }
+              else {
+                this.errorCount ++;
+              }
+            })
+          }
+          this.noEvent = false;
+
+      })
+
+
     },
     inputVoicedSoundMark() {
+      this.displayHintLetters = false;
+      this.displayInput = true;
+
       this.inputtedLetters.push('゛');
 
       let answer = '';
@@ -235,9 +316,12 @@ export default {
           }
         })
       }
-      
+
     },
     inputSemiVoicedSoundMark() {
+      this.displayHintLetters = false;
+      this.displayInput = true;
+
       this.inputtedLetters.push('゜');
 
       let answer = '';
@@ -262,7 +346,7 @@ export default {
           }
         })
       }
-      
+
     },
     clickAnswerBtn() {
       this.inputtedLetters = [];
@@ -271,16 +355,42 @@ export default {
       this.successModal = true;
     },
     closeSuccessModal() {
-      if(this.quizNumber === this.quizDataList.length - 1) {
-        this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
-        this.quizNumber = 0;
+
+      if(this.trialMode === true && this.quizNumber === 9) {
+
+        this.successModal = false;
+        this.inputtedLetters = [];
+        this.$store.commit('updateTrialTime', this.trialTime);
+        this.trialMode = false;
+        this.resultModal = true;
+        this.trialTime = 0;
+
       }
-      else if(this.quizNumber !== this.quizDataList.length - 1) {
-        this.quizNumber++;
-        this.$store.commit('updateCurrentQuiz', this.quizDataList[this.quizNumber]);
+      else {
+
+        if(this.quizNumber === this.quizDataList.length - 1) {
+
+          const shuffle = ([...array]) => {
+            for (let i = array.length - 1; i >= 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+          }
+
+          this.quizDataList = shuffle(this.quizDataList);
+
+          this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+          this.quizNumber = 0;
+        }
+        else if(this.quizNumber !== this.quizDataList.length - 1) {
+          this.quizNumber++;
+          this.$store.commit('updateCurrentQuiz', this.quizDataList[this.quizNumber]);
+        }
+        this.successModal = false;
+        this.inputtedLetters = [];
+
       }
-      this.successModal = false;
-      this.inputtedLetters = [];
     },
     openFailedModal() {
       this.failedModal = true;
@@ -288,6 +398,81 @@ export default {
     closeFailedModal() {
       this.inputtedLetters.splice(-1,1);
       this.failedModal = false;
+    },
+    displayHint() {
+
+      if(this.displayHintLetters === false) {
+
+        let answerLetters = this.currentQuiz.name;
+
+        let hintLetters = answerLetters.slice(0, this.displayedLetters.length + 1);
+        this.arrayHintLetters = hintLetters.split('');
+
+        this.displayHintLetters = true;
+        this.displayInput = false;
+      }
+      else {
+        this.displayHintLetters = false;
+        this.displayInput = true;
+      }
+    },
+    changeNoutoreModo() {
+
+      if(this.noutore === true) {
+        this.noutore = false;
+      } else if(this.noutore === false) {
+        const shuffle = ([...array]) => {
+          for (let i = array.length - 1; i >= 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+          return array;
+        }
+
+        this.noutoreSyllabary = shuffle(this.japaneseSyllabary);
+        this.noutore = true;
+      }
+    },
+    openTrialModal() {
+      this.trialModal = true;
+      this.trialMode = false;
+    },
+    closeTrialModal() {
+      this.trialModal = false;
+    },
+    startTrialMode() {
+      this.trialModal = false;
+
+      this.trialMode = true;
+      this.trialTime = 0;
+
+      const shuffle = ([...array]) => {
+        for (let i = array.length - 1; i >= 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      this.quizDataList = shuffle(this.quizDataList);
+
+      this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+      this.quizNumber = 0;
+
+      const intervalId = setInterval(() => {
+        this.trialTime++;
+        if(this.trialMode === false) {
+          clearInterval(intervalId);
+        }
+      },1000)
+
+    },
+    closeResultModal() {
+      this.resultModal = false;
+    },
+    backToHome() {
+      this.trialMode = false;
+      this.$router.push('/');
     }
   },
   created() {
@@ -303,11 +488,57 @@ export default {
           };
           this.quizDataList.push(quizData);
         });
-        this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+
+        if(this.$store.getters.currentUser.id !== ''){
+          getDocs(collection(getFirestore(), 'users', this.$store.getters.currentUser.id, 'quiz'))
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              const quizData = {
+                id: doc.id,
+                name: doc.data().name,
+                letters: doc.data().letters,
+                wordCount: doc.data().wordcount,
+                url: doc.data().path
+              };
+              this.quizDataList.push(quizData);
+
+              const shuffle = ([...array]) => {
+                for (let i = array.length - 1; i >= 0; i--) {
+                  const j = Math.floor(Math.random() * (i + 1));
+                  [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+              }
+
+              this.quizDataList = shuffle(this.quizDataList);
+              this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+              
+            });
+          })
+          .catch(() => {
+            console.log('カスタムクイズデータ取得失敗');
+          })
+        }
+        else {
+          const shuffle = ([...array]) => {
+            for (let i = array.length - 1; i >= 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+          }
+
+          this.quizDataList = shuffle(this.quizDataList);
+
+
+          this.$store.commit('updateCurrentQuiz', this.quizDataList[0]);
+          }
+
       })
       .catch(() => {
-        console.log('クイズデータ取得失敗');
+        console.log('きほんクイズデータ取得失敗');
       })
+
   }
 }
 </script>
@@ -316,10 +547,11 @@ export default {
   .container {
     background-color: #beeffd;
     border: 5px solid #fff;
-    width: 100%;
     margin: 0 auto;
-    max-height: 720px;
     aspect-ratio: 16 / 9;
+    width: auto;
+    height: auto;
+    max-height: 720px;
 
     .container-left {
       width: 25%;
@@ -368,7 +600,7 @@ export default {
         justify-content: space-around;
         align-items: center;
 
-        .menu-btn {
+        .menuBtn {
           width: 40%;
           height: 35%;
           background-color: #fa7e7e;
@@ -379,6 +611,11 @@ export default {
           font-weight: bold;
           line-height: 5.2vw;
           cursor: pointer;
+        }
+
+        .active {
+          color: #fa7e7e;
+          background-color: yellow;
         }
 
       }
@@ -406,6 +643,20 @@ export default {
           letter-spacing: 1.3vw;
 
         }
+
+        .hint-letter {
+          padding: 2vw;
+          font-size: 6.5vw;
+          line-height: 8.5vw;
+          text-align: center;
+          font-weight: bold;
+
+          .new-hint-letter {
+            color: #cccccc;
+          }
+
+        }
+
 
       }
 
@@ -442,9 +693,13 @@ export default {
               color: #333333;
             }
 
+            .noevent {
+              pointer-events: none;
+            }
+
           }
 
-          li.next-empty {
+          li.nextEmpty {
             margin-bottom: 12%;
           }
 
@@ -455,6 +710,10 @@ export default {
     }
 
   }
+
+.noevent {
+  pointer-events: none;
+}
 
 
 </style>

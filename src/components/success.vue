@@ -4,7 +4,9 @@
   class="display">
     <div class="modal">
       <div class="message">
-        正解だよ
+        <p>よくわかったね</p>
+        <img :src="currentQuiz.url" alt="">
+        <p>{{ currentQuiz.name }}</p>
       </div>
     </div>
   </div>
@@ -15,6 +17,11 @@ export default {
   methods: {
     closeSuccessModal() {
       this.$emit('closeSuccessModal');
+    }
+  },
+  computed: {
+    currentQuiz() {
+      return this.$store.getters.currentQuiz;
     }
   }
 }
@@ -35,18 +42,23 @@ export default {
 
     .modal {
       width: 50%;
-      height: 80%;
       background-color: #fff;
       border-radius: 20%;
       border: solid 5px #ff763b;
       display: flex;
       justify-content: center;
       align-items: center;
+      aspect-ratio: 10 / 9;
 
       .message {
         text-align: center;
         font-weight: bold;
         font-size: 4vw;
+
+        img {
+          width: 40%;
+        }
+
       }
 
     }
