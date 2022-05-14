@@ -64,6 +64,11 @@
 
 ![リスト画面](./list-img.png) 
 
+#### ・新規登録/ログイン機能
+気軽に試していただきたいので、ユーザー名とパスワードだけでユーザー登録が可能です。
+
+![新規登録画面](./signup-img.png) 
+
 ### Compiles and minifies for production
 ```
 npm run build
