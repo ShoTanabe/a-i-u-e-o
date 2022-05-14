@@ -17,7 +17,6 @@
 
 
 ## 使用技術
-```
 ・Vue  
 ・VueCLI  
 ・VueRouter  
@@ -28,14 +27,13 @@
   -Firestore  
   -Storage  
   -Hosting
-```
 
 
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## 機能一覧
+### くいずモード  
+「くいずモード」では、表示されるイラストの名前を五十音表形式の入力パットで入力して答えます。間違った文字を入力すると、注意されるので、正しく入力して、正解していきましょう。
+#### ・ひんと機能
+「ひんと」ボタンを押すと、解答中のクイズの次の一文字が表示されるので、同じ文字を探して入力してみましょう。わからなくなって投げ出すことなくクイズに挑戦できます。
 
 ### Compiles and minifies for production
 ```
