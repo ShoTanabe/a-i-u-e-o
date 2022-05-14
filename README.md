@@ -69,6 +69,11 @@
 
 ![新規登録画面](./readme-img/signup-img.png) 
 
+#### ・クイズ追加機能
+画像と読み方を登録して新しいクイズを追加できます。追加したクイズはログイン状態だと「くいずモード」と「じゆうモード」両方で使用可能です。
+
+![クイズ追加画面](./readme-img/newquiz-img.png) 
+
 ### Compiles and minifies for production
 ```
 npm run build
