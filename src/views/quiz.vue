@@ -582,9 +582,18 @@ export default {
           position: absolute;
           top: 13vw;
           left: 1vw;
+          display: table-cell;
+          text-align: center;
+          vertical-align: middle;
+          height: 60%;
+
 
           img {
-            width: 100%;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+            vertical-align: top;
           }
 
         }

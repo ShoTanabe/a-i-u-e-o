@@ -288,11 +288,15 @@ export default {
 
             .previewImg {
               width: 100%;
+              height: 13vw;
               margin-top: 0.5vw;
               text-align: center;
 
               img {
-                width: 40%;
+                width: auto;
+                height: auto;
+                max-width: 50%;
+                max-height: 100%;
               }
 
             }

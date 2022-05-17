@@ -623,13 +623,19 @@ export default {
             .imgBlock {
               background-color: #fff;
               width: 80%;
+              height: 15vw;
+              text-align: center;
+              vertical-align: middle;
               margin: 0 auto 1.5vw auto;
               border-radius: 5px;
-              text-align: center;
               padding: 1vw 0;
 
               img {
-                width: 80%;
+                width: auto;
+                height: auto;
+                max-width: 80%;
+                max-height: 100%;
+                line-height: 100%;
               }
             }
 
