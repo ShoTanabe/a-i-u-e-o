@@ -55,6 +55,7 @@
 <script>
 
 import SuccessModal from '@/components/success.vue'
+import { getLocalImageUrl } from '@/utils/imageUrl'
 
 import {
   collection,
@@ -192,7 +193,7 @@ export default {
       const calledData = this.quizDataList.find(data => data.name === calledName);
 
       if(calledData === undefined) {
-        this.calledImage = 'https://firebasestorage.googleapis.com/v0/b/a-i-u-e-o.appspot.com/o/quiz-img%2Fno-img.png?alt=media&token=1fced5f2-d440-4831-9e02-f12f8f475161';
+        this.calledImage = `${process.env.BASE_URL}images/no-img.png`;
       } else {
         this.calledImage = this.quizDataList.find(data => data.name === calledName).url;
       }
@@ -211,7 +212,7 @@ export default {
             name: doc.data().name,
             letters: doc.data().letters,
             wordCount: doc.data().wordcount,
-            url: doc.data().path
+            url: getLocalImageUrl(doc.data().path)
           };
           this.quizDataList.push(quizData);
         });
@@ -283,9 +284,18 @@ export default {
           position: absolute;
           top: 13vw;
           left: 1vw;
+          display: table-cell;
+          text-align: center;
+          vertical-align: middle;
+          height: 60%;
+
 
           img {
-            width: 100%;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+            vertical-align: top;
           }
 
         }

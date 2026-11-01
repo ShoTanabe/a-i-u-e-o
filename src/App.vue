@@ -11,6 +11,8 @@ body{
   margin: 0;
   padding: 10px;
   background-color: #beeffd;
+  user-select: none;
+  font-family: "メイリオ", "MS Pゴシック", sans-serif;
 }
 
 .clearfix::after {

@@ -54,9 +54,17 @@ export default {
         text-align: center;
         font-weight: bold;
         font-size: 4vw;
+        display: table-cell;
+        vertical-align: middle;
+        width: 30vw;
+        height: 26vw;
 
         img {
-          width: 40%;
+          width: auto;
+          height: auto;
+          max-height: 70%;
+          max-width: 80%;
+          margin-bottom: 1vw;
         }
 
       }
