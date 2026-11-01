@@ -36,12 +36,13 @@ export default {
   .container {
     aspect-ratio: 16 / 9;
     background-image: url(/home.png);
-    background-size: contain;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
     border: 5px solid #fff;
-    width: 100%;
+    width: min(100%, calc((100dvh - 20px) * 16 / 9));
     height: auto;
     margin: 0 auto;
-    max-height: 720px;
     position: relative;
 
     .menuBtn {

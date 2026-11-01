@@ -107,6 +107,7 @@ import SuccessModal from '@/components/success.vue'
 import FailedModal from '@/components/failed.vue'
 import TrialModal from '@/components/trial.vue'
 import ResultModal from '@/components/result.vue'
+import { getLocalImageUrl } from '@/utils/imageUrl'
 
 import {
   collection,
@@ -484,7 +485,7 @@ export default {
             name: doc.data().name,
             letters: doc.data().letters,
             wordCount: doc.data().wordcount,
-            url: doc.data().path
+            url: getLocalImageUrl(doc.data().path)
           };
           this.quizDataList.push(quizData);
         });
@@ -549,9 +550,8 @@ export default {
     border: 5px solid #fff;
     margin: 0 auto;
     aspect-ratio: 16 / 9;
-    width: auto;
+    width: min(100%, calc((100dvh - 20px) * 16 / 9));
     height: auto;
-    max-height: 720px;
 
     .container-left {
       width: 25%;
@@ -604,21 +604,32 @@ export default {
         background-color: #c0ff91;
         width: 100%;
         height: 30%;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-        align-items: center;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: repeat(2, minmax(0, 1fr));
+        gap: 5%;
+        padding: 5%;
+        box-sizing: border-box;
 
         .menuBtn {
-          width: 40%;
-          height: 35%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          min-width: 0;
+          min-height: 0;
+          padding: 0 2px;
+          box-sizing: border-box;
+
           background-color: #fa7e7e;
-          border-radius: 10%;
+          border-radius: 10px;
           text-align: center;
           color: #fff;
-          font-size: 1.8vw;
+
+          font-size: clamp(12px, 1.8vw, 28px);
           font-weight: bold;
-          line-height: 5.2vw;
+          line-height: 1.2;
+
           cursor: pointer;
         }
 
@@ -692,14 +703,18 @@ export default {
             cursor: pointer;
             border-radius: 10%;
             box-shadow: 2px 2px 15px -5px #777777;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             .letter {
-              margin: 0 auto;
               font-weight: bold;
               font-size: 3vw;
-              line-height: 6vw;
+              line-height: 1;
               text-align: center;
               color: #333333;
+              transform: translateY(0.09em);
             }
 
             .noevent {

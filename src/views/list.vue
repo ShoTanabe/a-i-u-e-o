@@ -151,6 +151,7 @@
 import SignupModal from '@/components/signup.vue'
 import LoginModal from '@/components/login.vue'
 import MakingQuizModal from '@/components/making_quiz.vue'
+import { getLocalImageUrl } from '@/utils/imageUrl'
 
 import {
   collection,
@@ -254,8 +255,8 @@ export default {
             this.loginModal = false;
           });
         })
-        .catch(() => {
-          console.log('カスタムクイズデータ取得失敗');
+        .catch((error) => {
+          console.log('カスタムクイズデータ取得失敗', error);
         })
 
     },
@@ -377,45 +378,30 @@ export default {
       quiz.customMenu = false;
     }
   },
-  created() {
-    getDocs(collection(getFirestore(), 'quiz-data'))
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const quizData = {
-            id: doc.id,
-            name: doc.data().name,
-            letters: doc.data().letters,
-            wordCount: doc.data().wordcount,
-            url: doc.data().path
-          };
-          this.quizDataList.push(quizData);
-        });
-      })
-      .catch(() => {
-        console.log('クイズデータ取得失敗');
-      })
+created() {
+  // 最初から用意されているクイズのみ取得
+  getDocs(collection(getFirestore(), 'quiz-data'))
+    .then((querySnapshot) => {
+      this.quizDataList = [];
 
-    getDocs(collection(getFirestore(), 'users', this.$store.getters.currentUser.id, 'quiz'))
-      .then((querySnapshot) => {
-        this.customQuizDataList = [];
-        querySnapshot.forEach((doc) => {
-          const quizData = {
-            id: doc.id,
-            name: doc.data().name,
-            letters: doc.data().letters,
-            wordCount: doc.data().wordcount,
-            url: doc.data().path,
-            customMenu: false,
-            editAnswer: false
-          };
-          this.customQuizDataList.push(quizData);
-        });
-      })
-      .catch(() => {
-        console.log('カスタムクイズデータ取得失敗');
-      })
-      
-  }
+      querySnapshot.forEach((doc) => {
+        const quizData = {
+          id: doc.id,
+          name: doc.data().name,
+          letters: doc.data().letters,
+          wordCount: doc.data().wordcount,
+          url: getLocalImageUrl(doc.data().path)
+        };
+
+        this.quizDataList.push(quizData);
+      });
+
+      console.log('既存クイズ取得成功:', this.quizDataList.length, '件');
+    })
+    .catch((error) => {
+      console.error('既存クイズ取得失敗:', error);
+    });
+}
 }
 </script>
 
